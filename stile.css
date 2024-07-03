@@ -1,0 +1,35 @@
+.select-wrapper {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.custom-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+/* Stile per l'elemento fornitore */
+#fornitori-list{
+  max-width: 400px;
+}
+.fornitore-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+/* Stile per il bottone di rimozione */
+.remove-fornitore {
+  color: red;
+  font-size: 1.3em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.remove-fornitore:hover {
+  color: darkred;
+}
