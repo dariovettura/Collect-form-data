@@ -83,22 +83,37 @@ function mostra_custom_fields_metabox_fornitori($post)
   // Recupera i custom fields che vuoi visualizzare
   global $my_fields;
 
+  // Recupera le categorie da ACF
+  $categories = acf_get_fields('group_66791fd6840e4');
+
   // Mostra i campi input per ciascun custom field
   foreach ($my_fields as $field) {
+    $field_value = get_post_meta($post->ID, $field, true);
+
     if ($field == 'stato-albo') {
-      $field_value = get_post_meta($post->ID, $field, true);
       ?>
       <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
         <select id="<?php echo esc_attr($field); ?>" name="<?php echo esc_attr($field); ?>">
-
           <option value="confermato" <?php selected($field_value, 'confermato'); ?>>Confermato</option>
           <option value="non_confermato" <?php selected($field_value, 'non_confermato'); ?>>Non confermato</option>
         </select>
       </p>
       <?php
+    } elseif ($field == 'categoria') {
+      ?>
+      <p>
+        <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
+        <select id="<?php echo esc_attr($field); ?>" name="<?php echo esc_attr($field); ?>">
+          <?php foreach ($categories as $category): ?>
+            <option value="<?php echo esc_attr($category['name']); ?>" <?php selected($field_value, $category['name']); ?>>
+              <?php echo esc_html($category['label']); ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </p>
+      <?php
     } else {
-      $field_value = get_post_meta($post->ID, $field, true);
       ?>
       <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
@@ -109,6 +124,7 @@ function mostra_custom_fields_metabox_fornitori($post)
     }
   }
 }
+
 
 // Funzione per salvare i custom fields
 function salva_custom_fields_fornitori($post_id)

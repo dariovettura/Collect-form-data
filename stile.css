@@ -4,13 +4,26 @@
   margin-bottom: 20px;
 }
 
+.list-container {
+  gap: 20px;
+  margin-top: 30px;
+  display: flex;
+}
+.flex-1{
+  flex: 1;
+}
+.divider{
+  width: 2px;
+  background-color: #000;
+}
+
 .custom-select {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 /* Stile per l'elemento fornitore */
-#fornitori-list{
+#fornitori-list {
   max-width: 400px;
 }
 .fornitore-item {

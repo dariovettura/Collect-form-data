@@ -1,44 +1,53 @@
 jQuery(document).ready(function ($) {
-  function getFornitoriByCategory() {
-    $("#category-select").on("change", function () {
-      var category = $(this).val();
-
-      $.ajax({
-        url: fornitori_ajax_object.ajax_url,
-        type: "POST",
-        data: {
-          action: "get_fornitori_by_category",
-          category: category,
-          security: fornitori_ajax_object.ajax_nonce,
-        },
-        success: function (response) {
-          var fornitoriList = $("#fornitori-list");
-          fornitoriList.empty();
-          if (response.success && response.data.length > 0) {
-            $.each(response.data, function (index, post) {
-              fornitoriList.append(
-                '<div class="fornitore-item">' +
-                  '<div> <span class="fornitore-title">' +
-                  post.title +
-                  '</span> -  <span class="fornitore-email">' +
-                  post.email +
-                  " </span></div>" +
-                  '<span class="remove-fornitore">&times;</span>' +
-                  "</div>"
-              );
-            });
-          } else {
-            fornitoriList.append("<p>Nessun fornitore trovato.</p>");
-          }
-
-          // Gestisci il click per rimuovere l'elemento
-          $(".remove-fornitore").on("click", function () {
-            $(this).parent().remove();
+  function getFornitoriByCategories(categories) {
+    $.ajax({
+      url: fornitori_ajax_object.ajax_url,
+      type: "POST",
+      data: {
+        action: "get_fornitori_by_categories",
+        categories: categories,
+        security: fornitori_ajax_object.ajax_nonce,
+      },
+      success: function (response) {
+        var fornitoriList = $("#fornitori-list");
+        fornitoriList.empty();
+        if (response.success && response.data.length > 0) {
+          $.each(response.data, function (index, post) {
+            fornitoriList.append(
+              '<div class="fornitore-item">' +
+                '<div> <span class="fornitore-title">' +
+                post.title +
+                '</span> -  <span class="fornitore-email">' +
+                post.email +
+                " </span></div>" +
+                '<span class="remove-fornitore">&times;</span>' +
+                "</div>"
+            );
           });
-        },
-      });
+        } else {
+          fornitoriList.append("<p>Nessun fornitore trovato.</p>");
+        }
+
+        // Gestisci il click per rimuovere l'elemento
+        $(".remove-fornitore").on("click", function () {
+          $(this).parent().remove();
+        });
+      },
     });
   }
+
+  $("#category-checkboxes input[type='checkbox']").on("change", function () {
+    var selectedCategories = [];
+    $("#category-checkboxes input[type='checkbox']:checked").each(function () {
+      selectedCategories.push($(this).val());
+    });
+
+    if (selectedCategories.length > 0) {
+      getFornitoriByCategories(selectedCategories);
+    } else {
+      $("#fornitori-list").empty(); // Svuota la lista se non ci sono checkbox selezionate
+    }
+  });
   function inviaPreventivo() {
     // Funzione per gestire l'apertura della modale senza AJAX
     $("#open-modal-button").click(function () {
@@ -125,6 +134,11 @@ jQuery(document).ready(function ($) {
   }
 
   // Chiama la funzione per inizializzare il comportamento
-  getFornitoriByCategory();
+  getFornitoriByCategories();
   inviaPreventivo();
+});
+
+
+jQuery(document).ready(function ($) {
+ 
 });
