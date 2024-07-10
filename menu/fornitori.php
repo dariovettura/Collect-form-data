@@ -4,6 +4,14 @@ $my_fields = array(
   'nome',
   'cognome',
   'indirizzo',
+  'cap',
+  'provincia',
+  'denominazione',
+  'paese-fatturazione',
+  'cod-fiscale',
+  'p-iva',
+  'note',
+  'allegato',
   'email',
   'telefono',
   'categoria',
@@ -113,7 +121,21 @@ function mostra_custom_fields_metabox_fornitori($post)
         </select>
       </p>
       <?php
-    } else {
+    } 
+    elseif ($field === 'allegato') {
+      ?>
+      <p>
+          <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
+          <?php if (!empty($field_value)) : ?>
+              <a href="<?php echo esc_url(wp_get_attachment_url($field_value)); ?>" target="_blank">Scarica allegato</a><br>
+              <small>ID Allegato: <?php echo esc_html($field_value); ?></small>
+          <?php else: ?>
+              <span>Non ci sono allegati</span>
+          <?php endif; ?>
+      </p>
+      <?php
+  } 
+    else {
       ?>
       <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
