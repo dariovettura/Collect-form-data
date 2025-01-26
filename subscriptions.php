@@ -19,15 +19,15 @@ $my_fields = array(
   'stato-albo'
 );
 // Registra il cpt fornitori
-add_action('init', 'fornitori_post_type');
-function fornitori_post_type()
+add_action('init', 'subscriptions_post_type');
+function subscriptions_post_type()
 {
   register_post_type(
-    'fornitore',
+    'cfd_subscriber',
     array(
       'labels' => array(
-        'name' => __('Fornitori'),
-        'singular_name' => __('Fornitore')
+        'name' => __('Subscribers'),
+        'singular_name' => __('Subscriber')
       ),
       'public' => false, // Set to false to hide from frontend view
       'publicly_queryable' => false, // Set to false to disable public queries
@@ -35,19 +35,19 @@ function fornitori_post_type()
       'show_ui' => true, // Display in admin UI
       'show_in_menu' => true, // Display in admin menu
       'has_archive' => false, // Disable archive
-      'rewrite' => array('slug' => 'fornitori'),
+      'rewrite' => array('slug' => 'cfd_subscriber'),
     )
   );
 }
 
 // Function to display the Fornitori page
-function fornitori_page()
+function subscribers_page()
 {
   // Code for the Fornitori list page
   ?>
   <div>
-    <h1 style="display: inline-block;">Fornitori</h1>
-    <a href="<?php echo admin_url('post-new.php?post_type=fornitore'); ?>" class="page-title-action">Aggiungi Nuovo</a>
+    <h1 style="display: inline-block;">Subscribers</h1>
+    <a href="<?php echo admin_url('post-new.php?post_type=cfd_subscriber'); ?>" class="page-title-action">Add new</a>
   </div>
 
   <?php
@@ -56,7 +56,7 @@ function fornitori_page()
   require_once (ABSPATH . 'wp-admin/includes/template.php');
 
   // Set the current screen to display the post type list table
-  $post_type = 'fornitore';
+  $post_type = 'cfd_subscriber';
   $post_type_object = get_post_type_object($post_type);
   $screen = get_current_screen();
   $screen->post_type = $post_type;
@@ -73,21 +73,21 @@ function fornitori_page()
 }
 
 
-function aggiungi_custom_fields_metabox_fornitori()
+function aggiungi_custom_fields_metabox_subscribers()
 {
   add_meta_box(
-    'custom_fields_metabox_fornitori',
-    __('Dati Fornitore'),
-    'mostra_custom_fields_metabox_fornitori',
-    'fornitore',
+    'custom_fields_metabox_subscribers',
+    __('Subcribers Data'),
+    'mostra_custom_fields_metabox_subscribers',
+    'cfd_subscriber',
     'normal',
     'high'
   );
 }
-add_action('add_meta_boxes_fornitore', 'aggiungi_custom_fields_metabox_fornitori');
+add_action('add_meta_boxes_cfd_subscriber', 'aggiungi_custom_fields_metabox_subscribers');
 
 // Funzione per visualizzare i custom fields nella metabox
-function mostra_custom_fields_metabox_fornitori($post)
+function mostra_custom_fields_metabox_subscribers($post)
 {
   // Recupera i custom fields che vuoi visualizzare
   global $my_fields;
@@ -99,19 +99,19 @@ function mostra_custom_fields_metabox_fornitori($post)
   foreach ($my_fields as $field) {
     $field_value = get_post_meta($post->ID, $field, true);
 
-    if ($field == 'stato-albo') {
+    if ($field == 'status') {
       ?>
       <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
         <select id="<?php echo esc_attr($field); ?>" name="<?php echo esc_attr($field); ?>">
-          <option value="confermato" <?php selected($field_value, 'confermato'); ?>>Confermato</option>
-          <option value="non_confermato" <?php selected($field_value, 'non_confermato'); ?>>Non confermato</option>
+          <option value="confirmed" <?php selected($field_value, 'confirmed'); ?>>Confirmed 🟢</option>
+          <option value="not_confirmed" <?php selected($field_value, 'not_corfirmed'); ?>>Not Confirmed 🔴</option>
         </select>
       </p>
       <?php
     } elseif ($field == 'categoria') {
       ?>
-      <p>
+      <!-- <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
         <select id="<?php echo esc_attr($field); ?>" name="<?php echo esc_attr($field); ?>">
           <?php foreach ($categories as $category): ?>
@@ -120,11 +120,11 @@ function mostra_custom_fields_metabox_fornitori($post)
             </option>
           <?php endforeach; ?>
         </select>
-      </p>
+      </p> -->
       <?php
     } elseif ($field === 'allegato') {
       ?>
-      <p>
+      <!-- <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
         <?php if (!empty($field_value)): ?>
           <a href="<?php echo esc_url(wp_get_attachment_url($field_value)); ?>" target="_blank">Scarica allegato</a><br>
@@ -132,7 +132,7 @@ function mostra_custom_fields_metabox_fornitori($post)
         <?php else: ?>
           <span>Non ci sono allegati</span>
         <?php endif; ?>
-      </p>
+      </p> -->
       <?php
     } else {
       ?>
@@ -148,7 +148,7 @@ function mostra_custom_fields_metabox_fornitori($post)
 
 
 // Funzione per salvare i custom fields
-function salva_custom_fields_fornitori($post_id)
+function salva_custom_fields_subribers($post_id)
 {
   // // Verifica se il campo è stato inviato
   // if (!isset($_POST['email']) || !isset($_POST['telefono']) || !isset($_POST['preventivo'])) {
@@ -163,15 +163,15 @@ function salva_custom_fields_fornitori($post_id)
     }
   }
 }
-add_action('save_post_fornitore', 'salva_custom_fields_fornitori');
+add_action('save_post_cfd_subscriber', 'salva_custom_fields_subribers');
 
 
 // Rimuovere l'editor di testo classico
-function rimuovi_editor_di_testo_fornitori()
+function remove_text_editor_subscribers()
 {
-  remove_post_type_support('fornitore', 'editor');
+  remove_post_type_support('cfd_subscriber', 'editor');
 }
-add_action('init', 'rimuovi_editor_di_testo_fornitori');
+add_action('init', 'remove_text_editor_subscribers');
 
 
 // Aggiungere colonne personalizzate nella lista dei post
