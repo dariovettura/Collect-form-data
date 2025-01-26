@@ -167,6 +167,12 @@ function invia_email_fornitori()
 
   // Invia l'email a ciascun fornitore
   $success = true;
+  $options = get_option('gestione_fornitori');
+  $email_from = isset($options['mail_from']) && !empty($options['mail_from']) ? $options['mail_from'] : 'preventivi@baranomultiservizi.it';
+
+  add_filter( 'wp_mail_from', function ( $original_email_address )use ($email_from)  {
+return $email_from;
+} );
   foreach ($fornitori as $fornitore) {
     $to = sanitize_email($fornitore['email']);
     $subject = 'Richiesta di preventivo';

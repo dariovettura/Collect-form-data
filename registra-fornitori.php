@@ -46,19 +46,19 @@ function map_fields($post_data)
 
   // Mappa i campi personalizzati ai nomi standard
   $mapped_fields = array(
-    'nome' => isset($post_data['name']) ? sanitize_text_field ($post_data['name']): '',
-    'cognome' => isset($post_data['field_f50917d']) ? sanitize_text_field ($post_data['field_f50917d']) : '',
-    'indirizzo' => isset($post_data['field_0cca7df']) ? sanitize_text_field ($post_data['field_0cca7df']) : '',
-    'cap' => isset($post_data['field_af5801c']) ? sanitize_text_field ($post_data['field_af5801c']) : '',
-    'provincia' => isset($post_data['field_ec0936b']) ? sanitize_text_field ($post_data['field_ec0936b']) : '',
-    'denominazione' => isset($post_data['field_53a9051']) ? sanitize_text_field ($post_data['field_53a9051']) : '',
-    'paese-fatturazione' => isset($post_data['field_cdc8407']) ? sanitize_text_field ($post_data['field_cdc8407']) : '',
-    'cod-fiscale' => isset($post_data['field_1563b6c']) ? sanitize_text_field ($post_data['field_1563b6c']) : '',
-    'p-iva' => isset($post_data['field_e3ffdd5']) ? sanitize_text_field ($post_data['field_e3ffdd5']) : '',
-    'note' => isset($post_data['field_e8e202f']) ? sanitize_text_field ($post_data['field_e8e202f']) : '',
-    'allegato' => isset($post_data['field_5002080']) ? sanitize_text_field ($post_data['field_5002080']) : '',
-    'email' => isset($post_data['field_7a7bc64']) ? sanitize_text_field ($post_data['field_7a7bc64']) : '',
-    'categoria' => isset($post_data['field_c07434b']) ? sanitize_text_field ($post_data['field_c07434b']) : '', 
+    'nome' => isset($post_data['name']) ? sanitize_text_field($post_data['name']) : '',
+    'cognome' => isset($post_data['field_f50917d']) ? sanitize_text_field($post_data['field_f50917d']) : '',
+    'indirizzo' => isset($post_data['field_0cca7df']) ? sanitize_text_field($post_data['field_0cca7df']) : '',
+    'cap' => isset($post_data['field_af5801c']) ? sanitize_text_field($post_data['field_af5801c']) : '',
+    'provincia' => isset($post_data['field_ec0936b']) ? sanitize_text_field($post_data['field_ec0936b']) : '',
+    'denominazione' => isset($post_data['field_53a9051']) ? sanitize_text_field($post_data['field_53a9051']) : '',
+    'paese-fatturazione' => isset($post_data['field_cdc8407']) ? sanitize_text_field($post_data['field_cdc8407']) : '',
+    'cod-fiscale' => isset($post_data['field_1563b6c']) ? sanitize_text_field($post_data['field_1563b6c']) : '',
+    'p-iva' => isset($post_data['field_e3ffdd5']) ? sanitize_text_field($post_data['field_e3ffdd5']) : '',
+    'note' => isset($post_data['field_e8e202f']) ? sanitize_text_field($post_data['field_e8e202f']) : '',
+    'allegato' => isset($post_data['field_5002080']) ? sanitize_text_field($post_data['field_5002080']) : '',
+    'email' => isset($post_data['field_7a7bc64']) ? sanitize_text_field($post_data['field_7a7bc64']) : '',
+    'categoria' => isset($post_data['field_c07434b']) ? sanitize_text_field($post_data['field_c07434b']) : '',
     'stato-albo' => 'non_confermato'
   );
 
@@ -75,12 +75,12 @@ function create_post_from_form()
   if (isset($_POST['fields'])) {
     $fields = map_fields($_POST['fields']);
     $post_title = $fields['nome'] . ' ' . $fields['cognome'];
-   
+
 
     // Crea il nuovo post
     $post_id = wp_insert_post(
       array(
-        'post_title' => $post_title ,
+        'post_title' => $post_title,
         'post_content' => '',
         'post_type' => 'fornitore',
         'post_status' => 'publish',
@@ -89,8 +89,11 @@ function create_post_from_form()
 
     // Verifica se il post è stato creato con successo
     if ($post_id) {
+      $formatted_id = 'ALB-' . str_pad($post_id, 9, '0', STR_PAD_LEFT);
+      update_post_meta($post_id, 'ID_albo', $formatted_id);
+
       foreach ($fields as $campo_key => $campo_value) {
-        update_post_meta( $post_id, $campo_key, $campo_value);
+        update_post_meta($post_id, $campo_key, $campo_value);
       }
       wp_send_json_success(array('post_id' => $post_id));
     } else {

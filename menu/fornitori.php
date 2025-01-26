@@ -1,6 +1,7 @@
 <?php
 global $my_fields;
 $my_fields = array(
+  'ID_albo',
   'nome',
   'cognome',
   'indirizzo',
@@ -121,21 +122,19 @@ function mostra_custom_fields_metabox_fornitori($post)
         </select>
       </p>
       <?php
-    } 
-    elseif ($field === 'allegato') {
+    } elseif ($field === 'allegato') {
       ?>
       <p>
-          <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
-          <?php if (!empty($field_value)) : ?>
-              <a href="<?php echo esc_url(wp_get_attachment_url($field_value)); ?>" target="_blank">Scarica allegato</a><br>
-              <small>ID Allegato: <?php echo esc_html($field_value); ?></small>
-          <?php else: ?>
-              <span>Non ci sono allegati</span>
-          <?php endif; ?>
+        <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
+        <?php if (!empty($field_value)): ?>
+          <a href="<?php echo esc_url(wp_get_attachment_url($field_value)); ?>" target="_blank">Scarica allegato</a><br>
+          <small>ID Allegato: <?php echo esc_html($field_value); ?></small>
+        <?php else: ?>
+          <span>Non ci sono allegati</span>
+        <?php endif; ?>
       </p>
       <?php
-  } 
-    else {
+    } else {
       ?>
       <p>
         <label for="<?php echo esc_attr($field); ?>"><?php echo esc_html($field); ?>:</label><br>
@@ -178,9 +177,10 @@ add_action('init', 'rimuovi_editor_di_testo_fornitori');
 // Aggiungere colonne personalizzate nella lista dei post
 function aggiungi_colonne_personalizzate_fornitori($columns)
 {
+  $columns['ID_albo'] = __('ID Albo');
   $columns['email'] = __('Email');
   $columns['telefono'] = __('Telefono');
-  $columns['categoria'] = __('categoria');
+  $columns['categoria'] = __('Categoria');
   $columns['stato-albo'] = __('Stato Albo');
   return $columns;
 }
@@ -189,6 +189,9 @@ add_filter('manage_fornitore_posts_columns', 'aggiungi_colonne_personalizzate_fo
 function mostra_colonne_personalizzate_fornitori($column, $post_id)
 {
   switch ($column) {
+    case 'ID_albo':
+      echo get_post_meta($post_id, 'ID_albo', true);
+      break;
     case 'email':
       echo get_post_meta($post_id, 'email', true);
       break;
@@ -209,6 +212,7 @@ add_action('manage_fornitore_posts_custom_column', 'mostra_colonne_personalizzat
 // Rendere le colonne ordinabili
 function colonne_ordinabili_fornitori($columns)
 {
+  $columns['ID_albo'] = 'ID_albo';
   $columns['email'] = 'email';
   $columns['telefono'] = 'telefono';
   $columns['categoria'] = 'categoria';
@@ -226,7 +230,10 @@ function ordine_colonne_fornitori($query)
 
   $orderby = $query->get('orderby');
 
-  if ('email' === $orderby) {
+  if ('ID_albo' === $orderby) {
+    $query->set('meta_key', 'ID_albo');
+    $query->set('orderby', 'meta_value');
+  } elseif ('email' === $orderby) {
     $query->set('meta_key', 'email');
     $query->set('orderby', 'meta_value');
   } elseif ('telefono' === $orderby) {
@@ -304,7 +311,7 @@ function enqueue_custom_admin_scripts($hook)
 
     // Carica il file JavaScript personalizzato
     // wp_enqueue_script('custom-admin-js', plugin_dir_url(__FILE__) . 'fornitori.js', array('jquery', 'jquery-ui-dialog'), null, true);
-     wp_enqueue_script('custom-admin-js', plugin_dir_url(__FILE__) . 'conferma-albo.js', array('jquery', 'jquery-ui-dialog'), null, true);
+    wp_enqueue_script('custom-admin-js', plugin_dir_url(__FILE__) . 'conferma-albo.js', array('jquery', 'jquery-ui-dialog'), null, true);
 
     // Passa l'URL di admin-ajax.php al file JavaScript
     wp_localize_script(

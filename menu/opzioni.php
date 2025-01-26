@@ -31,9 +31,16 @@ function preventivi_register_settings() {
         'preventivi_options_page'
     );
 
+     // Add the mail_from field
+     add_settings_field(
+        'gestione_fornitori_mail_from',
+        'Mittente della Mail',
+        'preventivi_mail_from_callback',
+        'preventivi_options_page',
+        'preventivi_mail_section'
+    );
   
 }
-
 
 
 function preventivi_mail_text_callback() {
@@ -45,6 +52,12 @@ function preventivi_mail_text_callback() {
         'textarea_rows' => 10,
         'media_buttons' => true
     ));
+}
+
+function preventivi_mail_from_callback() {
+    $options = get_option('gestione_fornitori');
+    $mail_from = isset($options['mail_from']) ? $options['mail_from'] : '';
+    echo '<input type="text" name="gestione_fornitori[mail_from]" value="' . esc_attr($mail_from) . '" class="regular-text" />';
 }
 ?>
 
